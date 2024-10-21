@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../ui-kit/api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Screens } from "../../navigation/screen.name";
 
 interface UserState {
   status: boolean;
@@ -32,6 +34,7 @@ export const createUser = createAsyncThunk(
 
 export const getUser = createAsyncThunk("getUser/user", async () => {
   const data = await api.get("/protected");
+
   return data;
 });
 
@@ -40,27 +43,25 @@ export const loginUser = createAsyncThunk(
   async (userObject: UserObject, { dispatch }) => {
     const { data } = await api.post("/login", userObject);
 
-    localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("refreshToken", data.refreshToken);
+    AsyncStorage.setItem("accessToken", data.accessToken);
+    AsyncStorage.setItem("refreshToken", data.refreshToken);
 
     if (data.accessToken) {
-      dispatch(getUser);
+      dispatch(getUser());
     }
 
     return data;
   }
 );
 
+export const selectInitialRouteNameForUser = (state: any) => {
+  return !state.user ? Screens.home : Screens.signIn;
+};
+
 const createUserSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    logOut: (state) => {
-      localStorage.removeItem("accessToken");
-      state.user = null;
-      // action.payload.dispatch(todoLogOut())
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(createUser.pending, (state) => {
@@ -104,7 +105,5 @@ const createUserSlice = createSlice({
       });
   },
 });
-
-export const { logOut } = createUserSlice.actions;
 
 export default createUserSlice.reducer;

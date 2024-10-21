@@ -6,4 +6,5 @@ export interface Box {
     id: number;
     zone: Zone;
     pan: Animated.ValueXY;
+    color?: string;
   };

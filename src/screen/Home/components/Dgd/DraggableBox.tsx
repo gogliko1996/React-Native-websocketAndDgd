@@ -1,21 +1,51 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Animated,
   PanResponder,
-  StyleSheet,
   Text,
   GestureResponderEvent,
   PanResponderGestureState,
 } from "react-native";
-import { Box, Zone } from "./dgd";
+import { Box, Zone } from "./DraggableBox.props";
+import { styles } from "./DraggableBox.stye";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../redux/store";
 
 const DraggableBox: React.FC = () => {
   const [boxes, setBoxes] = useState<Box[]>([
-    { id: 1, zone: "zone1", pan: new Animated.ValueXY() },
-    { id: 2, zone: "zone1", pan: new Animated.ValueXY() },
-    { id: 3, zone: "zone1", pan: new Animated.ValueXY() },
+    { id: 1, zone: "zone1", color: "#000", pan: new Animated.ValueXY() },
+    { id: 2, zone: "zone1", color: "#fff", pan: new Animated.ValueXY() },
+    { id: 3, zone: "zone1", color: "#000", pan: new Animated.ValueXY() },
   ]);
+
+  const user = useSelector((state: RootState) => state.user.user);
+
+  const userId = user.id;
+
+  const wss = new WebSocket("ws://localhost:8000");
+
+  useEffect(() => {
+    if (user.id) {
+      wss.onopen = () => {
+        wss.send(JSON.stringify({ type: "USER_ID", id: userId }));
+      };
+    }
+  }, [user.id]);
+
+  useEffect(() => {
+    wss.addEventListener("message", (event) => {
+      console.log("event", event);
+    });
+
+    wss.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    return () => {
+      wss.close();
+    };
+  });
 
   const handleDrop = (
     gestureState: PanResponderGestureState,
@@ -73,47 +103,21 @@ const DraggableBox: React.FC = () => {
               <Animated.View
                 key={box.id}
                 {...createPanResponder(box.id).panHandlers}
-                style={[box.pan.getLayout(), styles.box]}
-              ></Animated.View>
+                style={[
+                  box.pan.getLayout(),
+                  { backgroundColor: box.color },
+                  styles.box,
+                ]}
+              >
+                <View
+                  style={{ width: 20, height: 20, backgroundColor: "#000" }}
+                />
+              </Animated.View>
             ))}
         </View>
       ))}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  dropZone: {
-    width: "80%",
-    minHeight: 150,
-    marginVertical: 20,
-    paddingBottom: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f2f2f2",
-    borderRadius: 10,
-    borderColor: "#000",
-    borderWidth: 1,
-  },
-  box: {
-    width: "90%",
-    zIndex: 100,
-    height: 50,
-    marginTop: 5,
-    marginBottom: 5,
-    backgroundColor: "blue",
-    borderRadius: 5,
-  },
-  zoneText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-});
 
 export default DraggableBox;

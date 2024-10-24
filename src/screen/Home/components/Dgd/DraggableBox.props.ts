@@ -1,10 +1,14 @@
 import { Animated } from "react-native";
 
-export type Zone = 'zone1' | 'zone2' | 'zone3';
+export type Zone = "todo" | "done" | "inProgres";
 
 export interface Box {
-    id: number;
-    zone: Zone;
-    pan: Animated.ValueXY;
-    color?: string;
-  };
+  status: string | Zone;
+  pan: Animated.ValueXY;
+  color?: string;
+  title: string;
+  description: string;
+  startStatus?: string | null;
+  id?: number;
+  userId?: string;
+}

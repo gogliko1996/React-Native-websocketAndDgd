@@ -6,7 +6,6 @@ import {
   Text,
   GestureResponderEvent,
   PanResponderGestureState,
-  Button,
   TextInput,
   TouchableOpacity,
 } from "react-native";
@@ -69,7 +68,7 @@ const DraggableBox: React.FC = () => {
 
       if (dataType === "Delete") {
         const filterBoxes: Box[] = [...boxes].filter(
-          (item) => item.id !== data.payload.id
+          (item) => item.id !== data.payload.id,
         );
 
         setBoxes(filterBoxes);
@@ -99,7 +98,7 @@ const DraggableBox: React.FC = () => {
   const handleDrop = (
     gestureState: PanResponderGestureState,
     boxId: number,
-    startZone: string
+    startZone: string,
   ) => {
     const moveY = gestureState.moveY;
     let newStatus: Zone = "todo";
@@ -112,8 +111,8 @@ const DraggableBox: React.FC = () => {
 
     setBoxes((prevBoxes) =>
       prevBoxes.map((box) =>
-        box.id === boxId ? { ...box, status: newStatus } : box
-      )
+        box.id === boxId ? { ...box, status: newStatus } : box,
+      ),
     );
 
     const updateList = boxes.find((item) => item.id === boxId);
@@ -128,7 +127,7 @@ const DraggableBox: React.FC = () => {
             status: newStatus,
             startStatus: startZone,
           },
-        })
+        }),
       );
     }
 
@@ -149,12 +148,12 @@ const DraggableBox: React.FC = () => {
             dy: currentBox?.pan.y as Animated.Value,
           },
         ],
-        { useNativeDriver: false }
+        { useNativeDriver: false },
       ),
 
       onPanResponderRelease: (
         e: GestureResponderEvent,
-        gestureState: PanResponderGestureState
+        gestureState: PanResponderGestureState,
       ) => handleDrop(gestureState, boxId, startZone),
     });
   };
@@ -166,13 +165,18 @@ const DraggableBox: React.FC = () => {
 
   const creatList = () => {
     dispatch(
-      creatTodo({ title: inputValue, description: "asd", status: zone, userId })
+      creatTodo({
+        title: inputValue,
+        description: "asd",
+        status: zone,
+        userId,
+      }),
     );
   };
 
   const deleteList = (id: number) => {
-    dispatch(deleteTodo(id))
-  }
+    dispatch(deleteTodo(id));
+  };
 
   return (
     <View style={styles.container}>
@@ -187,7 +191,7 @@ const DraggableBox: React.FC = () => {
                 {...createPanResponder(Number(box.id), zones).panHandlers}
                 style={[box.pan.getLayout(), styles.box]}
               >
-                <Text>{box.title}</Text>
+                <Text>{box.status}</Text>
                 <DeleteButton opPress={() => deleteList(Number(box.id))} />
               </Animated.View>
             ))}
@@ -202,7 +206,7 @@ const DraggableBox: React.FC = () => {
 
               <View style={styles.buttonBox}>
                 <TouchableOpacity onPress={() => serchInput(zones)}>
-                  <Text style={{ fontSize: 18 }}>CLOSE</Text>
+                  <Text>CLOSE</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => creatList()}>
@@ -211,7 +215,14 @@ const DraggableBox: React.FC = () => {
               </View>
             </>
           ) : (
-            <Button title="Add card" onPress={() => serchInput(zones)} />
+            <TouchableOpacity
+              onPress={() => {
+                serchInput(zones);
+                setInputValue(zones);
+              }}
+            >
+              <Text>ADD card</Text>
+            </TouchableOpacity>
           )}
         </View>
       ))}

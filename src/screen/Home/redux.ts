@@ -93,21 +93,6 @@ const createTodoreducer = createSlice({
       }
     },
 
-    updateTodoOptimistic: (
-      state,
-      action: PayloadAction<{ id: number; updateData: TodoObject }>
-    ) => {
-      const index = state.todos?.findIndex(
-        (todo) => todo.id === action.payload.id
-      );
-      if (index !== undefined && index !== -1) {
-        state.todos![index] = {
-          ...state.todos![index],
-          ...action.payload.updateData,
-        };
-      }
-    },
-
     removeTodoOptimistic: (state, action: PayloadAction<number>) => {
       state.todos =
         state.todos?.filter((todo) => todo.id !== action.payload) || null;
@@ -183,7 +168,6 @@ export const {
   removeTodoOptimistic,
   deleteTodoOptimistic,
   addTodoBack,
-  updateTodoOptimistic,
   todoLogOut,
 } = createTodoreducer.actions;
 

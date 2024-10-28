@@ -2,4 +2,4 @@
 
 # connected mobile and web
 
-<iframe src="https://giphy.com/embed/lRwJ65Wj1kM8XrgEMD" width="480" height="302" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/lRwJ65Wj1kM8XrgEMD">via GIPHY</a></p>
+https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExbjFyaTkxb3AzMGtsdjBvOXEwM29wNGRtaDhzYm5hbWQ4b29rbjV6OCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lRwJ65Wj1kM8XrgEMD/giphy.gif
